@@ -2,14 +2,11 @@
 function showTab(name) {
   document.querySelectorAll('.leistung-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.leistung-tab').forEach(t => t.classList.remove('active'));
-
   const panel = document.getElementById('panel-' + name);
   if (panel) panel.classList.add('active');
-
   document.querySelectorAll('.leistung-tab').forEach(t => {
     if (t.dataset.tab === name) t.classList.add('active');
   });
-
   const placeholder = document.getElementById('tab-placeholder');
   if (placeholder) placeholder.style.display = 'none';
 }
@@ -29,32 +26,23 @@ const observer = new IntersectionObserver((entries) => {
 document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
 // ── HIDE-ON-SCROLL NAVBAR ──
-// Zeigt Navbar wenn nach oben gescrollt, versteckt sie beim Runterscrollen
-let lastScrollY = window.scrollY;
-let ticking = false;
+// Beim Runterscrollen: Navbar ausbleden. Bei auch nur 1px nach oben: sofort einblenden.
 const navbar = document.querySelector('.navbar');
+let lastScrollY = window.scrollY;
 
 window.addEventListener('scroll', () => {
-  if (!ticking) {
-    window.requestAnimationFrame(() => {
-      const currentScrollY = window.scrollY;
-
-      if (currentScrollY <= 10) {
-        // Ganz oben: immer sichtbar
-        navbar.classList.remove('navbar-hidden');
-      } else if (currentScrollY < lastScrollY) {
-        // Nach oben scrollen: einblenden
-        navbar.classList.remove('navbar-hidden');
-      } else {
-        // Nach unten scrollen: ausblenden
-        navbar.classList.add('navbar-hidden');
-      }
-
-      lastScrollY = currentScrollY;
-      ticking = false;
-    });
-    ticking = true;
+  const currentScrollY = window.scrollY;
+  if (currentScrollY <= 0) {
+    // Ganz oben: immer sichtbar
+    navbar.classList.remove('navbar-hidden');
+  } else if (currentScrollY < lastScrollY) {
+    // Nach oben (auch 1px): sofort einblenden
+    navbar.classList.remove('navbar-hidden');
+  } else if (currentScrollY > lastScrollY) {
+    // Nach unten: sofort ausblenden
+    navbar.classList.add('navbar-hidden');
   }
+  lastScrollY = currentScrollY;
 }, { passive: true });
 
 // ── ACTIVE NAV ON SCROLL ──
